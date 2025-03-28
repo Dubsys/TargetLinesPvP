@@ -100,13 +100,6 @@ public static class TargetLineManager
             return;
         }
 
-#if !PROBABLY_BAD
-    if (Service.ClientState.IsPvP)
-    {
-        return;
-    }
-#endif
-
         List<int> lineDrawIndices = new List<int>();
 
         var target = TargetSystem.Instance();
@@ -227,7 +220,7 @@ public static class TargetLineManager
     }
 
     private static void DrawOverlay_DX() {
-        if (Service.ClientState.LocalPlayer == null || Service.ClientState.IsPvP || !ShaderSingleton.Initialized) {
+        if (Service.ClientState.LocalPlayer == null || !ShaderSingleton.Initialized) {
             return;
         }
 
