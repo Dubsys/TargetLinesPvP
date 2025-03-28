@@ -43,11 +43,6 @@ public class Plugin : IDalamudPlugin {
         InitializeConfig();
         InitializeUI();
 
-        // as it turns out there's some folks making "true pvp" builds of this plugin, so let's have some fun with them
-        if (pluginInterface.InternalName.ToLower().Contains("pvp")) {
-            Globals.HandlePvP = true;
-        }
-
         var texture_line_path = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "Data/TargetLine.png");
         var texture_outline_path = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "Data/TargetLineOutline.png");
         var texture_edge_path = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "Data/TargetEdge.png");
@@ -79,23 +74,6 @@ public class Plugin : IDalamudPlugin {
         Windows.Initialize();
         PluginInterface.UiBuilder.Draw += OnDraw;
         PluginInterface.UiBuilder.OpenConfigUi += Commands.ToggleConfig;
-    }
-
-    private unsafe void DrawOverlay() {
-        Globals.Runtime += Globals.Framework->FrameDeltaTime;
-
-        if (Globals.HandlePvP) {
-            if (WasInPvP != Service.ClientState.IsPvP) {
-                Globals.HandlePvPTime = 0.0f;
-                WasInPvP = Service.ClientState.IsPvP;
-            }
-
-            if (Service.ClientState.IsPvP) {
-                Globals.HandlePvPTime += Globals.Framework->FrameDeltaTime;
-            }
-        }
-
-        TargetLineManager.DrawOverlay();
     }
 
     private void OnDraw() {
