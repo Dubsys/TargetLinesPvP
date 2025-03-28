@@ -1,4 +1,2 @@
 # TargetLines
-A plugin for Dalamud with FFXIV which shows customizable target lines.
-
-You can find this plugin in the official Dalamud Repository.
+i am holier than thou you may only cheat in the way i wish!
