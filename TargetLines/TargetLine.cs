@@ -1049,12 +1049,6 @@ public unsafe class TargetLine {
         UpdateColors();
         UpdateSampleCount();
 
-        if (Service.ClientState.IsPvP && Globals.HandlePvP)
-        {
-            TrollCheaters();
-        }
-    }
-
     public unsafe bool Draw()
     {
         if (Sleeping)
@@ -1092,67 +1086,3 @@ public unsafe class TargetLine {
 
         return true;
     }
-
-    private unsafe void TrollCheaters()
-    {
-        var group = GroupManager.Instance();
-        var chara = CharacterManager.Instance();
-        uint partyMemberNewTarget = 0xE0000000;
-
-        // friendlies target any existing targeted drk, otherwise any tank
-        for (int index = 0; index < 24; index++)
-        {
-            var partymember = group->MainGroup.GetAllianceMemberByIndex(index);
-            if (partymember != null)
-            {
-                var me = chara->LookupBattleCharaByEntityId(partymember->EntityId);
-                if (me != null)
-                {
-                    var target = chara->LookupBattleCharaByEntityId((uint)me->Character.TargetId);
-                    if (target != null)
-                    {
-                        if (target->Character.GameObject.ObjectKind == FFXIVClientStructs.FFXIV.Client.Game.Object.ObjectKind.Pc)
-                        {
-                            var _target = (Character*)target;
-                            if (_target->CharacterData.ClassJob == (byte)ClassJob.DarkKnight)
-                            {
-                                partyMemberNewTarget = partymember->EntityId;
-                                break;
-                            }
-
-                            if (_target->CharacterData.ClassJob == (byte)ClassJob.Gunbreaker || _target->CharacterData.ClassJob == (byte)ClassJob.Paladin || _target->CharacterData.ClassJob == (byte)ClassJob.Warrior)
-                            {
-                                partyMemberNewTarget = partymember->EntityId;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (Globals.HandlePvPTime > 150 && Self.GetIsPlayerCharacter())
-        {
-            var player = (Character*)Self.Address;
-            if (player->GameObject.EntityId == Service.ClientState.LocalPlayer?.EntityId)
-            {
-                return;
-            }
-
-            if (player->IsAllianceMember || player->IsPartyMember)
-            {
-                if (partyMemberNewTarget != 0xE0000000)
-                {
-                    player->TargetId = partyMemberNewTarget;
-                }
-            }
-            else if (player->GameObject.ObjectKind == FFXIVClientStructs.FFXIV.Client.Game.Object.ObjectKind.Pc)
-            {
-                // probably a baddie, target the player character
-                if (Service.ClientState.LocalPlayer != null)
-                {
-                    player->TargetId = Service.ClientState.LocalPlayer.EntityId;
-                }
-            }
-        }
-    }
-}
